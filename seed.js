@@ -13,6 +13,9 @@ const dbConfig = {
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASS || '',
   database: process.env.DB_NAME || 'ManagementInventory',
+  ssl: process.env.DB_SSL === 'true' ? {
+    rejectUnauthorized: false
+  } : undefined
 };
 
 async function seed() {
