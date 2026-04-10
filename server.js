@@ -1,13 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
 
 dotenv.config();
 
 import './src/config/db.js';
 
 const app = express();
+app.use(compression());
 const PORT = process.env.PORT || 5000;
+
 
 app.use(cors({
   origin: '*', 
