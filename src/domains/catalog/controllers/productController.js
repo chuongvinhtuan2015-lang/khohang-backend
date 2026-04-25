@@ -20,9 +20,12 @@ export const getProductById = async (req, res) => {
 };
 
 export const createProduct = async (req, res) => {
+  const startTime = performance.now();
   try {
     const id = await ProductService.createProduct(req.body);
     res.status(201).json({ id, message: 'Tạo sản phẩm thành công' });
+    const endTime = performance.now();
+    console.log(`Thời gian tạo sản phẩm: ${endTime - startTime}ms`);
   } catch (e) {
     res.status(500).json({ message: e.message });
   }
