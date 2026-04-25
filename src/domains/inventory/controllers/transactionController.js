@@ -1,10 +1,14 @@
 import TransactionService from '../services/TransactionService.js';
 
 export const getTransactions = async (req, res) => {
+  const startTime = performance.now();
   try {
-    const { type, search, page, limit } = req.query; 
+    const { type, search, page, limit } = req.query;
     const result = await TransactionService.getTransactions({ type, search, page, limit });
     res.json(result);
+    const endTime = performance.now();
+    let label = type === 'IN' ? 'Nhập' : 'Xuất';
+    console.log(`Thời gian lấy danh sách phiếu ${label}: ${endTime - startTime}ms`);
   } catch (e) { res.status(500).json({ message: e.message }); }
 };
 
@@ -21,7 +25,7 @@ export const getTransactionById = async (req, res) => {
 export const createTransaction = async (req, res) => {
   try {
     const { type, note, items } = req.body;
-    const user_id = req.user.id; 
+    const user_id = req.user.id;
     const { id, transaction_code } = await TransactionService.createTransaction({ type, note, items, user_id });
     res.status(201).json({ id, transaction_code, message: 'Tạo phiếu thành công' });
   } catch (e) { res.status(500).json({ message: e.message }); }
