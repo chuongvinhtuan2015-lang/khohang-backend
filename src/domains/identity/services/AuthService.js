@@ -16,12 +16,12 @@ class AuthService {
       throw new Error('Tài khoản đã bị khóa');
     }
 
-    let isMatch = false;
-    if (user.password_hash.startsWith('$2')) {
-      isMatch = await bcrypt.compare(password, user.password_hash);
-    } else {
-      isMatch = (password === user.password_hash);
+    // Only allow bcrypt hashed passwords for security
+    if (!user.password_hash || !user.password_hash.startsWith('$2')) {
+      throw new Error('Tài khoản cần được cập nhật bảo mật, vui lòng liên hệ admin (Lỗi mã hóa mật khẩu).');
     }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
 
     if (!isMatch) {
       throw new Error('Mật khẩu không chính xác');

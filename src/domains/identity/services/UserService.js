@@ -13,10 +13,24 @@ class UserService {
   }
 
   async createUser(userData) {
-    const password_hash = userData.password || '123456';
-    // Ideally we should hash it here if it doesn't start with $2. 
-    // In old MVC, it created it without hashing it unless intercepted. We mimic existing behavior.
-    const id = await UserRepository.create({ ...userData, password_hash });
+    console.log('--- Creating User ---');
+    const { username, full_name, email, phone, role, password } = userData;
+    
+    const plainPassword = password || '123456';
+    const salt = await bcrypt.genSalt(10);
+    const password_hash = await bcrypt.hash(plainPassword, salt);
+    
+    console.log(`Hashing password for user: ${username}`);
+    
+    const id = await UserRepository.create({ 
+      username, 
+      password_hash, 
+      full_name, 
+      email, 
+      phone, 
+      role 
+    });
+    
     return id;
   }
 

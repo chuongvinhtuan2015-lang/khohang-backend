@@ -1,5 +1,6 @@
 import mysql from 'mysql2/promise';
 import dotenv from 'dotenv';
+import bcrypt from 'bcrypt';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -118,11 +119,14 @@ async function seed() {
 
     // Seeding 10 Users
     const roles = ['ADMIN', 'MANAGER', 'STAFF', 'STAFF', 'STAFF', 'STAFF', 'STAFF', 'STAFF', 'STAFF', 'STAFF'];
+    const salt = await bcrypt.genSalt(10);
+    const hashedPass = await bcrypt.hash('123456', salt);
+
     for (let i = 1; i <= 10; i++) {
         const username = i === 1 ? 'admin' : (i === 2 ? 'manager' : `staff${i}`);
         await connection.query(
             'INSERT INTO users (username, password_hash, full_name, email, role) VALUES (?, ?, ?, ?, ?)',
-            [username, '123456', `User ${i}`, `${username}@khohang.pro`, roles[i-1]]
+            [username, hashedPass, `User ${i}`, `${username}@khohang.pro`, roles[i-1]]
         );
     }
     console.log('✅ 10 Users inserted.');
